@@ -19,14 +19,19 @@ public class HealPixDensityMapper {
     private Projection projection;
     private HealPixWrapper healpix;
     private int[] counts;
+    private String outputFolder;
     private ArrayList<Long> previousStepPixels;
     private ArrayList<Long> currentPixels;
 
-    public HealPixDensityMapper(int width, int height, Projection projection, int nside) throws Exception {
+    public HealPixDensityMapper(int width, int height, Projection projection, int nside, String outputFolder) throws Exception {
         this.width = width;
         this.height = height;
         this.projection = projection;
         this.healpix = new HealPixWrapper(nside, Scheme.RING);
+        this.outputFolder = outputFolder;
+        if(!this.outputFolder.endsWith("/")) {
+            this.outputFolder += "/";
+        }
 
         double[] xRange = projection.getXRange();
         double[] yRange = projection.getYRange();
@@ -56,7 +61,7 @@ public class HealPixDensityMapper {
         }
     }
 
-    public void drawMap() throws Exception {
+    public void drawMap(int n) throws Exception {
         BufferedImage img = new BufferedImage(width, height, BufferedImage.TYPE_INT_RGB);
         double x, y, theta, phi, ip[];
         long ipix;
@@ -104,7 +109,7 @@ public class HealPixDensityMapper {
         System.out.println("\nWriting file...");
         try
         {
-            File f = new File("/Users/rzinkstok/Desktop/test.jpg");
+            File f = new File(outputFolder + "frame" + String.format("%06d", n) + ".jpg");
             boolean res = ImageIO.write(img, "png", f);
             System.out.println("Written file: " + res);
         }
