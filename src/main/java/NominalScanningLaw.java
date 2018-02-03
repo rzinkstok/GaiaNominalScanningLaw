@@ -20,7 +20,7 @@ public class NominalScanningLaw {
         inertialSpinRate = Math.toRadians(60.0/3600.0) * 86400; // Rad per day
         startTime = 14*365.25; // 1 january 2014 is 14*365.25 days after J2000.0
         endTime = startTime + 5*365.25;
-        stepSize = 0.001;
+        stepSize = 0.0005;
         nSteps = (int)(endTime/stepSize) + 1;
         stepHandler = new NSLStepHandler(nSteps, solarAspectAngle, "~/Desktop/movie/");
     }

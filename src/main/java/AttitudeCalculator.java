@@ -23,8 +23,8 @@ public class AttitudeCalculator {
         this.epsilon = epsilon;
         this.solarAspectAngle = solarAspectAngle;
         this.gamma = Math.toRadians(106.5);   // Angle between telescope arms
-        this.fovAlong = Math.toRadians(1.7);  // Size of the FoV of one telescope in scan direction
-        this.fovAcross = Math.toRadians(0.6); // Size of the FoV of one telescope normal to scan direction
+        this.fovAlong = Math.toRadians(0.74);  // Size of the FoV of a single telescope, in scan direction
+        this.fovAcross = Math.toRadians(0.66); // Size of the FoV of a single telescope, perpendicular to scan direction
     }
 
     public AttitudeCalculator(double solarAspectAngle) {

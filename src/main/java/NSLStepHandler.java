@@ -55,8 +55,8 @@ class NSLStepHandler implements FixedStepHandler {
             System.out.println("Error: " + e);
         }
 
-        if(current % 1000 == 0) {
-            drawMap(current/1000);
+        if(current % 2000 == 0) {
+            drawMap(current/2000);
         }
 
         if(current % 10000 == 0) {

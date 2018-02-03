@@ -1,6 +1,9 @@
 import java.io.File;
 import java.io.IOException;
 import java.awt.image.BufferedImage;
+import java.awt.Graphics2D;
+import java.awt.Color;
+import java.awt.BasicStroke;
 import java.util.ArrayList;
 import javax.imageio.ImageIO;
 
@@ -28,9 +31,13 @@ public class HealPixDensityMapper {
         this.height = height;
         this.projection = projection;
         this.healpix = new HealPixWrapper(nside, Scheme.RING);
+
         this.outputFolder = outputFolder;
+        if (this.outputFolder.startsWith("~" + File.separator)) {
+            this.outputFolder = System.getProperty("user.home") + this.outputFolder.substring(1);
+        }
         if(!this.outputFolder.endsWith("/")) {
-            this.outputFolder += "/";
+            this.outputFolder += File.separator;
         }
 
         double[] xRange = projection.getXRange();
@@ -63,9 +70,11 @@ public class HealPixDensityMapper {
 
     public void drawMap(int n) throws Exception {
         BufferedImage img = new BufferedImage(width, height, BufferedImage.TYPE_INT_RGB);
+        Graphics2D g2d = img.createGraphics();
+
         double x, y, theta, phi, ip[];
         long ipix;
-        int c, max=0, min = counts[0], sum=0;
+        int c, col, max=0, min = counts[0], sum=0;
         int white = (255<<16) | (255<<8) | 255;
 
         for(int i = 0; i<counts.length; i++) {
@@ -96,12 +105,54 @@ public class HealPixDensityMapper {
                     //ipix = pixtools.ang2pix(phi, theta); // PixTools needs phi (angle from north pole) first, then theta (in-plane angle)
                     ipix = healpix.ang2pix(new SphericalCoordinates(1, theta, phi));
                     c = (int)(255 * ((double)counts[(int)ipix]/max));
-                    int col = cm.getColor(c);
+                    if(c == 0) {
+                        col = white;
+                    }
+                    else {
+                        col = cm.getColor(c);
+                    }
                     img.setRGB(i, height - j - 1, col);
                 }
                 else {
                     img.setRGB(i, height - j - 1, white);
                 }
+            }
+        }
+
+        g2d.setColor(Color.lightGray);
+        g2d.setStroke(new BasicStroke(1));
+        double longitude, latitude;
+        double[] p1, p2, p3;
+        int x1, x2, x3, y1, y2, y3;
+        // Draw coordinate grid
+        int nx = 19;
+        int ny = 180;
+        for(int i=0; i<nx; i++) {
+            longitude = -180 + i * 360.0 / (nx - 1);
+            for (int j = 0; j < ny; j++) {
+                latitude = -90 + j * 180.0 / (ny - 1);
+                p1 = projection.projectLongLat(longitude, latitude);
+                x1 = (int) ((p1[0] - projection.getXRange()[0]) / deltax);
+                y1 = (int) ((p1[1] - projection.getYRange()[0]) / deltax);
+                p2 = projection.projectLongLat(longitude, latitude + 180.0 / (ny - 1));
+                x2 = (int) ((p2[0] - projection.getXRange()[0]) / deltax);
+                y2 = (int) ((p2[1] - projection.getYRange()[0]) / deltax);
+                g2d.drawLine(x1, y1, x2, y2);
+            }
+        }
+        nx = 180;
+        ny = 17;
+        for(int i=0; i<nx; i++) {
+            longitude = -180 + i * 360.0 / (nx);
+            for (int j = 0; j < ny; j++) {
+                latitude = -80 + j * 160.0 / (ny-1);
+                p1 = projection.projectLongLat(longitude, latitude);
+                x1 = (int) ((p1[0] - projection.getXRange()[0]) / deltax);
+                y1 = (int) ((p1[1] - projection.getYRange()[0]) / deltax);
+                p3 = projection.projectLongLat(longitude + 360.0/(nx), latitude);
+                x3 = (int)((p3[0] - projection.getXRange()[0])/deltax);
+                y3 = (int)((p3[1] - projection.getYRange()[0])/deltax);
+                g2d.drawLine(x1, y1, x3, y3);
             }
         }
 
