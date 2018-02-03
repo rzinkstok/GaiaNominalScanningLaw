@@ -6,7 +6,10 @@ import healpix.essentials.RangeSet;
 import org.apache.commons.math3.geometry.euclidean.threed.SphericalCoordinates;
 import org.apache.commons.math3.geometry.euclidean.threed.Vector3D;
 
+
 public class HealPixWrapper {
+    // Simple wrapper for HealPixBase
+    // Works with Apache commons math Vector3D and SphericalCoordinates
     private HealpixBase h;
     private int nside;
     private long npix;
