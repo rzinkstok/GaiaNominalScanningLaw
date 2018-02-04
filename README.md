@@ -30,9 +30,11 @@ with Nside=512, which translates to 3.14 million pixels.
 When the data is projected using a Hammer projection, and plotted in 4000 by 2000 pixels, this is
 the resulting density map, shown in ICRS coordinates:
 
-![GAIA Nominal Scanning Law: sky coverage of Gaia](gaia_nsl_density.jpg?raw=true "The GAIA Nominal Scanning Law: sky coverage of Gaia")
+![GAIA Nominal Scanning Law: sky coverage of Gaia](gaia_nsl_density.png?raw=true "The GAIA Nominal Scanning Law: sky coverage of Gaia")
 
 Figure 1: The GAIA Nominal Scanning Law: sky coverage of Gaia.
+
+The visualization used leans heavily on that used by Berry Holl, in his [video of Gaia's sky coverage](https://youtu.be/lRhe2grA9wE).
 
 ## Limitations
 
