@@ -167,7 +167,7 @@ public class HealPixDensityMapper {
         System.out.println("\nWriting file...");
         try
         {
-            File f = new File(outputFolder + "frame" + String.format("%06d", n) + ".jpg");
+            File f = new File(outputFolder + "frame" + String.format("%06d", n) + ".png");
             boolean res = ImageIO.write(img, "png", f);
             System.out.println("Written file: " + res);
         }
