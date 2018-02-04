@@ -10,6 +10,7 @@ class NSLStepHandler implements FixedStepHandler {
     private double[] solarLongitudes;
     private double[] nus;
     private double[] omegas;
+    private SphericalCoordinates sunDirection[];
     private SphericalCoordinates precessionAxis[];
     private SphericalCoordinates scanDirection[];
     private int current;
@@ -24,11 +25,12 @@ class NSLStepHandler implements FixedStepHandler {
         sun = new Sun();
         Projection hp = new HammerProjection(0, true);
         try {
-            h = new HealPixDensityMapper(4000, 2000, hp, 512, outputFolder);
+            h = new HealPixDensityMapper(4650, 2500, 4000, 2000, hp, 512, outputFolder);
         }
         catch(Exception e) {
             System.out.println("Error: " + e);
         }
+        h.setEpsilon(attitudeCalculator.getEpsilon());
         reset();
     }
 
@@ -36,15 +38,16 @@ class NSLStepHandler implements FixedStepHandler {
     }
 
     public void handleStep(double t, double[] y, double[] yDot, boolean isLast) {
-        h.nextStep();
         ts[current] = t;
         nus[current] = y[0];
         omegas[current] = y[1];
         solarLongitudes[current] = sun.apparentLongitude(t)[1];
 
         SphericalCoordinates[] scs = attitudeCalculator.calculateDirections(solarLongitudes[current], nus[current], omegas[current]);
-        precessionAxis[current] = scs[0];
-        scanDirection[current] = scs[1];
+        sunDirection[current] = scs[0];
+        precessionAxis[current] = scs[1];
+        scanDirection[current] = scs[2];
+        h.nextStep(t - ts[0], sunDirection[current], precessionAxis[current]);
 
         Vector3D[][] fovs = attitudeCalculator.calculateFoVs();
         try {
@@ -71,6 +74,7 @@ class NSLStepHandler implements FixedStepHandler {
         solarLongitudes = new double[nSteps];
         nus = new double[nSteps];
         omegas = new double[nSteps];
+        sunDirection = new SphericalCoordinates[nSteps];
         precessionAxis = new SphericalCoordinates[nSteps];
         scanDirection = new SphericalCoordinates[nSteps];
         current = 0;

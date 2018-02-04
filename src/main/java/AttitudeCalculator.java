@@ -11,6 +11,7 @@ public class AttitudeCalculator {
     private double gamma;
     private double fovAlong;
     private double fovAcross;
+    private Vector3D currentSunVector;
     private Vector3D currentPrecessionVector;
     private Vector3D currentScanDirectionVector;
 
@@ -36,6 +37,10 @@ public class AttitudeCalculator {
         return gamma;
     }
 
+    public double getEpsilon() {
+        return epsilon;
+    }
+
     private Quaternion quaternionFromAngleAndVector(double angle, Vector3D vector) {
         // Invert the angle to counteract the strange rotation convention of Apache commons math
         return new Quaternion(Math.cos(-angle/2.0), vector.scalarMultiply(Math.sin(-angle/2.0)).toArray());
@@ -59,16 +64,19 @@ public class AttitudeCalculator {
         Quaternion q123 = q3.multiply(q12);
         Quaternion q1234 = q4.multiply(q123);
 
-        // Apply to initial vector (x axis)
+        // Build rotation
+        Rotation r0 = new Rotation(q01.getQ0(), q01.getQ1(), q01.getQ2(), q01.getQ3(), true);
         Rotation r = new Rotation(q1234.getQ0(), q1234.getQ1(), q1234.getQ2(), q1234.getQ3(), true);
+        currentSunVector = r0.applyTo(Vector3D.PLUS_I);
         currentPrecessionVector = r.applyTo(Vector3D.PLUS_K);    // spin axis is 3rd axis of instrument frame
         currentScanDirectionVector = r.applyTo(Vector3D.PLUS_I); // central direction for the two lines of sight is the 1st axis of the instrument frame
 
         // Convert to spherical coordinates
+        SphericalCoordinates sc0 = new SphericalCoordinates(currentSunVector);
         SphericalCoordinates sc1 = new SphericalCoordinates(currentPrecessionVector);
         SphericalCoordinates sc2 = new SphericalCoordinates(currentScanDirectionVector);
 
-        return new SphericalCoordinates[] {sc1, sc2};
+        return new SphericalCoordinates[] {sc0, sc1, sc2};
     }
 
     public Vector3D[][] calculateFoVs() {

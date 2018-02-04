@@ -27,7 +27,7 @@ public class NominalScanningLaw {
 
     public void runIntegration() {
         // Initial conditions for nu and omega
-        double[] y = new double[] {0.0, 0.0};
+        double[] y = new double[] {Math.PI/2.0, Math.PI/2.0};
 
         stepHandler.reset();
         AdaptiveStepsizeIntegrator integrator = new DormandPrince853Integrator(1.0e-8, 1, 1.0e-10, 1.0e-10);
