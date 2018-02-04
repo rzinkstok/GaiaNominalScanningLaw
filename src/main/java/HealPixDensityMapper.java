@@ -26,6 +26,7 @@ public class HealPixDensityMapper {
     private int mapYOffset;
     private double deltax;
     private double deltay;
+    private int titleOffset;
 
     private Projection projection;
     private HealPixWrapper healpix;
@@ -47,6 +48,7 @@ public class HealPixDensityMapper {
         this.mapHeight = mapHeight;
         this.mapXOffset = 75;
         this.mapYOffset = (imageHeight - mapHeight)/2;
+        this.titleOffset = 0;
         this.projection = projection;
         this.healpix = new HealPixWrapper(nside, Scheme.RING);
 
@@ -243,16 +245,27 @@ public class HealPixDensityMapper {
         s = "-180";
         g2d.drawString(s, mapXOffset + mapWidth + textOffset, mapYOffset + mapHeight/2 + (fm.getAscent() - fm.getDescent())/2);
 
+        // Name
         g2d.drawString("Roel Zinkstok", mapXOffset, imageHeight - mapYOffset);
 
+        // Title
         font = new Font("Sans", Font.PLAIN, 25);
         g2d.setFont(font);
+
         int y = (int)(time/365.25);
         int d = (int)(time - y * 365.25);
         int hr = (int)((time - y * 365.25 - d) * 24);
         int min = (int)(((time - y * 365.25 - d) * 24 - hr) * 60);
-        s = String.format("NSL field transits in ICRS after: %d years %03d days %02d hr %02d min", y, d, hr, min);
-        g2d.drawString(s, mapXOffset + mapWidth/2 - fm.stringWidth(s)/2, mapYOffset - 50);
+        if(time<=2) {
+            s = String.format("NSL field transits in ICRS after: %d years %03d days %02d hr %02d min", y, d, hr, min);
+        }
+        else {
+            s = String.format("NSL field transits in ICRS after: %d years %03d days", y, d);
+        }
+        if(titleOffset == 0) {
+            titleOffset = mapXOffset + mapWidth/2 - fm.stringWidth(s)/2;
+        }
+        g2d.drawString(s, titleOffset, mapYOffset - 50);
     }
 
     private void drawScale(BufferedImage img, Graphics2D g2d) {
@@ -315,7 +328,7 @@ public class HealPixDensityMapper {
         // Sun
         worldPoint1 = projection.projectThetaPhi(sunPosition.getTheta(), sunPosition.getPhi());
         mapPoint1 = worldToMap(worldPoint1);
-        size = 50;
+        size = 25;
         g2d.setColor(Color.yellow);
         g2d.fillOval(mapPoint1[0] - size/2, mapPoint1[1] - size/2, size, size);
         g2d.setColor(Color.black);
@@ -324,7 +337,7 @@ public class HealPixDensityMapper {
         // Spin axis
         worldPoint1 = projection.projectThetaPhi(precessionPosition.getTheta(), precessionPosition.getPhi());
         mapPoint1 = worldToMap(worldPoint1);
-        size = 25;
+        size = 12;
         g2d.setColor(Color.black);
         g2d.fillOval(mapPoint1[0] - size/2, mapPoint1[1] - size/2, size, size);
     }

@@ -16,6 +16,7 @@ class NSLStepHandler implements FixedStepHandler {
     private SphericalCoordinates scanDirection[];
     private int current;
     private int nSteps;
+    private int framenumber;
     private HealPixDensityMapper h;
 
 
@@ -27,7 +28,6 @@ class NSLStepHandler implements FixedStepHandler {
         sun = new Sun();
         Projection hp = new HammerProjection(0, true);
         try {
-            //h = new HealPixDensityMapper(4650, 2500, 4000, 2000, hp, 512, outputFolder);
             h = new HealPixDensityMapper(1920, 1080, 1600, 800, hp, 512, outputFolder);
         }
         catch(Exception e) {
@@ -42,8 +42,9 @@ class NSLStepHandler implements FixedStepHandler {
 
     public void handleStep(double t, double[] y, double[] yDot, boolean isLast) {
         ts[current] = t;
+        double relativeT = t - ts[0];
         if(current % 10000 == 0) {
-            System.out.println(String.format("T = %.0f days", t-ts[0]));
+            System.out.println(String.format("T = %.0f days", relativeT));
         }
         nus[current] = y[0];
         omegas[current] = y[1];
@@ -53,7 +54,7 @@ class NSLStepHandler implements FixedStepHandler {
         sunDirection[current] = scs[0];
         precessionAxis[current] = scs[1];
         scanDirection[current] = scs[2];
-        h.nextStep(t - ts[0], sunDirection[current], precessionAxis[current]);
+        h.nextStep(relativeT, sunDirection[current], precessionAxis[current]);
 
         Vector3D[][] fovs = attitudeCalculator.calculateFoVs();
         try {
@@ -64,10 +65,29 @@ class NSLStepHandler implements FixedStepHandler {
             System.out.println("Error: " + e);
         }
 
-        if((continuous && (current % 2000==0)) || isLast) {
-            drawMap(current/2000);
+        boolean draw = false;
+        // First two days: every 10 minutes
+        if(relativeT <= 2 && current % 10 == 0) {
+            draw = true;
+        }
+        // Up to day 183: every day
+        if(relativeT > 2 && relativeT <= 183 && current % (24*60) == 0) {
+            draw = true;
+        }
+        // After day 183: every 11 days
+        if(relativeT > 183 && current % (11*24*60) == 0) {
+            draw = true;
         }
 
+        // For continuous mode: every day
+        if((continuous && (current % (24*60) == 0)) || isLast) {
+            draw = true;
+        }
+
+        if(draw) {
+            drawMap(framenumber);
+            framenumber += 1;
+        }
         current += 1;
     }
 
@@ -80,6 +100,7 @@ class NSLStepHandler implements FixedStepHandler {
         precessionAxis = new SphericalCoordinates[nSteps];
         scanDirection = new SphericalCoordinates[nSteps];
         current = 0;
+        framenumber = 0;
     }
 
     public void drawMap(int n) {
