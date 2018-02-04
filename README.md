@@ -34,7 +34,8 @@ the resulting density map, shown in ICRS coordinates:
 
 Figure 1: The GAIA Nominal Scanning Law: sky coverage of Gaia.
 
-The visualization used leans heavily on that used by Berry Holl, in his [video of Gaia's sky coverage](https://youtu.be/lRhe2grA9wE).
+The visualization used leans heavily on that used by Berry Holl, in his [video of Gaia's sky coverage](https://youtu.be/lRhe2grA9wE). 
+My own version of this video can be found [here](https://youtu.be/_BjJYRS1GCg).
 
 ## Limitations
 

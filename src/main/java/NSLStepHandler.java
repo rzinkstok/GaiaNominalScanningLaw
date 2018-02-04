@@ -43,9 +43,6 @@ class NSLStepHandler implements FixedStepHandler {
     public void handleStep(double t, double[] y, double[] yDot, boolean isLast) {
         ts[current] = t;
         double relativeT = t - ts[0];
-        if(current % 10000 == 0) {
-            System.out.println(String.format("T = %.0f days", relativeT));
-        }
         nus[current] = y[0];
         omegas[current] = y[1];
         solarLongitudes[current] = sun.apparentLongitude(t)[1];
@@ -85,6 +82,7 @@ class NSLStepHandler implements FixedStepHandler {
         }
 
         if(draw) {
+            System.out.println(String.format("T = %.0f days", relativeT));
             drawMap(framenumber);
             framenumber += 1;
         }
