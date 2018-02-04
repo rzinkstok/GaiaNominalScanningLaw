@@ -22,7 +22,7 @@ public class NominalScanningLaw {
         endTime = startTime + 5*365.25;
         stepSize = 0.0005;
         nSteps = (int)(endTime/stepSize) + 1;
-        stepHandler = new NSLStepHandler(nSteps, solarAspectAngle, "~/Desktop/movie/");
+        stepHandler = new NSLStepHandler(nSteps, solarAspectAngle, "~/Desktop/movie/", false);
     }
 
     public void runIntegration() {

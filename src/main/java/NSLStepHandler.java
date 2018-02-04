@@ -4,6 +4,7 @@ import org.apache.commons.math3.geometry.euclidean.threed.Vector3D;
 
 
 class NSLStepHandler implements FixedStepHandler {
+    boolean continuous;
     AttitudeCalculator attitudeCalculator;
     private Sun sun;
     private double[] ts;
@@ -19,13 +20,15 @@ class NSLStepHandler implements FixedStepHandler {
 
 
 
-    public NSLStepHandler(int nSteps, double solarAspectAngle, String outputFolder) {
+    public NSLStepHandler(int nSteps, double solarAspectAngle, String outputFolder, boolean continuous) {
+        this.continuous = continuous;
         this.nSteps = nSteps;
         attitudeCalculator = new AttitudeCalculator(solarAspectAngle);
         sun = new Sun();
         Projection hp = new HammerProjection(0, true);
         try {
-            h = new HealPixDensityMapper(4650, 2500, 4000, 2000, hp, 512, outputFolder);
+            //h = new HealPixDensityMapper(4650, 2500, 4000, 2000, hp, 512, outputFolder);
+            h = new HealPixDensityMapper(1920, 1080, 1600, 800, hp, 512, outputFolder);
         }
         catch(Exception e) {
             System.out.println("Error: " + e);
@@ -39,6 +42,9 @@ class NSLStepHandler implements FixedStepHandler {
 
     public void handleStep(double t, double[] y, double[] yDot, boolean isLast) {
         ts[current] = t;
+        if(current % 10000 == 0) {
+            System.out.println(String.format("T = %.0f days", t-ts[0]));
+        }
         nus[current] = y[0];
         omegas[current] = y[1];
         solarLongitudes[current] = sun.apparentLongitude(t)[1];
@@ -58,14 +64,10 @@ class NSLStepHandler implements FixedStepHandler {
             System.out.println("Error: " + e);
         }
 
-        if(current % 2000 == 0) {
+        if((continuous && (current % 2000==0)) || isLast) {
             drawMap(current/2000);
         }
 
-        if(current % 10000 == 0) {
-            //System.out.println(current + ": " + String.format("%.4f", t) + "\t(" + scs[0].getTheta() + "," +scs[0].getPhi() + ")\t("+ scs[1].getTheta() + "," + scs[1].getPhi() + ")"); //y[0] + "\t" + y[1]);
-            System.out.println(current + ": " + String.format("%.4f", t) + "\tnu: " + nus[current] + "\tOmega: " + omegas[current] + "\tsol: " + Math.toDegrees(solarLongitudes[current]) + "\tPA: " + Math.toDegrees(scs[0].getTheta()) + "," + Math.toDegrees(scs[0].getPhi()));
-        }
         current += 1;
     }
 

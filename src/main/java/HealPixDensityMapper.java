@@ -45,7 +45,7 @@ public class HealPixDensityMapper {
         this.imageHeight = imageHeight;
         this.mapWidth = mapWidth;
         this.mapHeight = mapHeight;
-        this.mapXOffset = 150;
+        this.mapXOffset = 75;
         this.mapYOffset = (imageHeight - mapHeight)/2;
         this.projection = projection;
         this.healpix = new HealPixWrapper(nside, Scheme.RING);
@@ -228,10 +228,10 @@ public class HealPixDensityMapper {
         }
 
         // Numbers
-        int textOffset = 15;
+        int textOffset = 7;
         g2d.setColor(Color.black);
         g2d.setRenderingHint(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_ON);
-        Font font = new Font("Sans", Font.PLAIN, 30);
+        Font font = new Font("Sans", Font.PLAIN, 15);
         g2d.setFont(font);
         FontMetrics fm = g2d.getFontMetrics(g2d.getFont());
         String s = "90";
@@ -245,25 +245,24 @@ public class HealPixDensityMapper {
 
         g2d.drawString("Roel Zinkstok", mapXOffset, imageHeight - mapYOffset);
 
-        font = new Font("Sans", Font.PLAIN, 50);
+        font = new Font("Sans", Font.PLAIN, 25);
         g2d.setFont(font);
         int y = (int)(time/365.25);
         int d = (int)(time - y * 365.25);
         int hr = (int)((time - y * 365.25 - d) * 24);
         int min = (int)(((time - y * 365.25 - d) * 24 - hr) * 60);
         s = String.format("NSL field transits in ICRS after: %d years %03d days %02d hr %02d min", y, d, hr, min);
-        g2d.drawString(s, mapXOffset + mapWidth/2 - fm.stringWidth(s)/2, mapYOffset - 100);
+        g2d.drawString(s, mapXOffset + mapWidth/2 - fm.stringWidth(s)/2, mapYOffset - 50);
     }
 
     private void drawScale(BufferedImage img, Graphics2D g2d) {
-        int width = 50;
+        int width = 25;
         int height = mapHeight;
-        int startx = 2*mapXOffset + mapWidth + 200;
+        int startx = 2*mapXOffset + mapWidth + 100;
         int starty = mapYOffset;
-        int textOffset = 20;
+        int textOffset = 10;
         int col;
         String s;
-
         ColorMap cm = ColorMap.getJet(256);
 
         for(int i=0; i<height; i++) {
@@ -273,13 +272,13 @@ public class HealPixDensityMapper {
             }
         }
         g2d.setColor(Color.black);
-        g2d.setStroke(new BasicStroke(2));
+        g2d.setStroke(new BasicStroke(1));
 
         g2d.drawRect(startx, starty, width, height);
 
         g2d.setColor(Color.black);
         g2d.setRenderingHint(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_ON);
-        Font font = new Font("Sans", Font.PLAIN, 30);
+        Font font = new Font("Sans", Font.PLAIN, 15);
         g2d.setFont(font);
         FontMetrics fm = g2d.getFontMetrics(g2d.getFont());
         s = String.format("%d", maxValue);
@@ -296,7 +295,7 @@ public class HealPixDensityMapper {
 
         // Ecliptic
         g2d.setRenderingHint(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_ON);
-        g2d.setStroke(new BasicStroke(5));
+        g2d.setStroke(new BasicStroke(2));
         g2d.setColor(Color.cyan);
 
         for(int i=0; i<nx; i++) {
