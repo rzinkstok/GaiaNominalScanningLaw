@@ -18,12 +18,16 @@ public class TestAttitudeCalculator {
     @Test
     public void testCreation() {
         SphericalCoordinates[] scs = a.calculateDirections(0, Math.PI/2.0, 0);
+        SphericalCoordinates refSun = new SphericalCoordinates(Vector3D.PLUS_I);
         SphericalCoordinates refPA = new SphericalCoordinates(Vector3D.PLUS_K);
         SphericalCoordinates refSD = new SphericalCoordinates(Vector3D.PLUS_I);
-        assertEquals("Precession axis theta", scs[0].getTheta(), refPA.getTheta(), 1e-10);
-        assertEquals("Precession axis phi", scs[0].getPhi(), refPA.getPhi(), 1e-10);
-        assertEquals("Scan direction theta", scs[1].getTheta(), refSD.getTheta(), 1e-10);
-        assertEquals("Scan directoon phi", scs[1].getPhi(), refSD.getPhi(), 1e-10);
+
+        assertEquals("Sun axis theta", scs[0].getTheta(), refSun.getTheta(), 1e-10);
+        assertEquals("Sun axis phi", scs[0].getPhi(), refSun.getPhi(), 1e-10);
+        assertEquals("Precession axis theta", scs[1].getTheta(), refPA.getTheta(), 1e-10);
+        assertEquals("Precession axis phi", scs[1].getPhi(), refPA.getPhi(), 1e-10);
+        assertEquals("Scan direction theta", scs[2].getTheta(), refSD.getTheta(), 1e-10);
+        assertEquals("Scan directoon phi", scs[2].getPhi(), refSD.getPhi(), 1e-10);
     }
 
     @Test
