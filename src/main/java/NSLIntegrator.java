@@ -12,10 +12,10 @@ public class NSLIntegrator implements FirstOrderDifferentialEquations {
 
     public NSLIntegrator(double S, double ksi, double omegaz) {
         this.S = S;
-        this.S2 = S*S;
+        this.S2 = this.S*this.S;
         this.ksi = ksi;
-        this.cksi = Math.cos(ksi);
-        this.sksi = Math.sin(ksi);
+        this.cksi = Math.cos(this.ksi);
+        this.sksi = Math.sin(this.ksi);
         this.omegaz = omegaz;
         this.sun = new Sun();
     }

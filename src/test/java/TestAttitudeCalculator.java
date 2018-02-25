@@ -32,7 +32,7 @@ public class TestAttitudeCalculator {
 
     @Test
     public void testCalculateFoVs() {
-        SphericalCoordinates[] scs = a.calculateDirections(0, Math.PI/2.0, 0);
+        a.calculateDirections(0, Math.PI/2.0, 0);
         Vector3D[][] fovs = a.calculateFoVs();
 
         Vector3D fov1center = fovs[0][0].add(fovs[0][1]).add(fovs[0][2]).add(fovs[0][3]).normalize();
